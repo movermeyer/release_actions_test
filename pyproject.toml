@@ -1,0 +1,17 @@
+[project]
+name = "movermeyer-release-test"
+version = "0.0.1"
+authors = [
+  { name="Michael Overmeyer" },
+]
+description = "Michael"
+readme = "README.rst"
+requires-python = ">3"
+license = {file = "LICENSE"}
+
+[project.urls]
+Homepage = "https://github.com/movermeyer/release_actions_test"
+Documentation = "https://github.com/movermeyer/release_actions_test"
+Repository = "https://github.com/movermeyer/release_actions_test"
+"Bug Tracker" = "https://github.com/movermeyer/release_actions_test/issues"
+Changelog = "https://github.com/movermeyer/release_actions_test/CHANGELOG.md"
