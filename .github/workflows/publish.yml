@@ -20,7 +20,7 @@ jobs:
 
       - name: Normalize the release tag into a version
         run: |
-          echo "release_tag=`echo '${{ github.event.release.tag_name }}'" >> $GITHUB_ENV
+          echo "release_tag=`echo '${{ github.event.release.tag_name }}'`" >> $GITHUB_ENV
 
       - name: Normalize the release tag into a version
         run: |
