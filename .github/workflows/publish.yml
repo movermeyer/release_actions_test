@@ -119,37 +119,37 @@ jobs:
   #       with:
   #         path: ./wheelhouse/*.whl
 
-  # build_sdist:
-  #   name: Build source distribution
-  #   needs: [pre_build_sanity_check]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/setup-python@v4
-  #       name: Install Python
-  #       with:
-  #         python-version: '3.12'
+  build_sdist:
+    name: Build source distribution
+    needs: [pre_build_sanity_check]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v4
+        name: Install Python
+        with:
+          python-version: '3.12'
 
-  #     - uses: actions/checkout@v4
-  #       # with: # TODO: Releases aren't necessarily on the default branch
-  #       #   ref: ${{ env.release_tag }}
+      - uses: actions/checkout@v4
+        # with: # TODO: Releases aren't necessarily on the default branch
+        #   ref: ${{ env.release_tag }}
 
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: release_values
+      - uses: actions/download-artifact@v3
+        with:
+          name: release_values
 
-  #     - name: Load normalized release values
-  #       run: |
-  #         xargs -a release_values.txt -l -I{} bash -c 'echo {} >> $GITHUB_ENV'
+      - name: Load normalized release values
+        run: |
+          xargs -a release_values.txt -l -I{} bash -c 'echo {} >> $GITHUB_ENV'
 
-  #     - name: Replace version in pyproject.toml (developmental releases)
-  #       run: sed -i -e 's/^version = ".*\?"$/version = "${{ env.developmental_release_version }}"/g' pyproject.toml
+      - name: Replace version in pyproject.toml (developmental releases)
+        run: sed -i -e 's/^version = ".*\?"$/version = "${{ env.version_to_use }}"/g' pyproject.toml
 
-  #     - name: Build sdist
-  #       run: python setup.py sdist
+      # - name: Build sdist
+      #   run: python setup.py sdist
 
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         path: dist/*.tar.gz
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     path: dist/*.tar.gz
 
   # publish_to_test_pypi:
   #   needs: [build_wheels, build_sdist, pre_build_sanity_check]
