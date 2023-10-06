@@ -78,7 +78,7 @@ jobs:
           echo 'version in pyproject.toml                             `${{ env.backports_version }}`'
           echo 'Version in Test PyPI                                  `${{ env.test_pypi_version }}`'
           echo 'New developmental version                             `${{ env.developmental_release_version }}`'
-          echo '${{ toJSON(github.event) }}'
+          echo '${{ toJSON(github) }}'
 
       - name: Verify that the version string we produced looks like a Python version string
         # https://peps.python.org/pep-0440/
