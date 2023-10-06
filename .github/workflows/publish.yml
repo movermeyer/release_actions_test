@@ -11,7 +11,7 @@ on:
 
 jobs:
   # Responsible for validating inputs and generating release values for the rest of the workflow
-  # Takes in the tag from the GitHub release
+  # Takes in the tag from the GitHub release, or a manually provided one for developmental releases
   pre_build_sanity_check:
     runs-on: ubuntu-latest
     steps:
@@ -67,9 +67,9 @@ jobs:
           echo 'Version in Test PyPI      `${{ env.test_pypi_version }}`'
 
       - name: Generate the developmental release version
-        # TODO: If there is a developmentatal release in Test PyPI for the version in pyproject.toml, increment the number. Else 1. Save in $GITHUB_ENV
+        # If there is a developmental release in Test PyPI for the version in pyproject.toml, increment the number. Else 1. Save in $GITHUB_ENV
         run: |
-          echo "developmental_release_version=`echo '${{ env.backports_version }}.dev1'`" >> $GITHUB_ENV
+          python -c 'from packaging import version; new = version.parse("${{ env.version_from_release_tag }}"); existing = version.parse("${{ env.test_pypi_version }}"); dev_number = existing.dev + 1 if existing.is_devrelease and new.release == existing.release else 1; epoch = f"{new.epoch}!" if new.epoch else ""; release = ".".join([str(x) for x in new.release]); pre = f"{new.pre[0]}{new.pre[1]}" if new.pre else ""; post = f".post{new.post}" if new.post else ""; dev = f".dev{dev_number}"; developmental_release_version=f"{epoch}{release}{pre}{post}{dev}"; print(f"developmental_release_version={developmental_release_version}")' >> $GITHUB_ENV
 
       - name: Log all the things
         # TODO: Compute the booleans
@@ -90,7 +90,7 @@ jobs:
 
       - name: Serialize normalized release values
         run: |
-          echo -e "release_version=${{ env.release_version }}\nrelease_tag=${{ env.release_tag }}\ndevelopmental_release_version=${{ env.developmental_release_version }}" > release_values.txt
+          echo -e "release_version=${{ env.version_from_release_tag }}\nrelease_tag=${{ env.release_tag }}\ndevelopmental_release_version=${{ env.developmental_release_version }}" > release_values.txt
 
       - name: Share normalized release values
         uses: actions/upload-artifact@v3
