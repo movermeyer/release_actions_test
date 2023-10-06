@@ -69,7 +69,7 @@ jobs:
       - name: Generate the developmental release version
         # TODO: If there is a developmentatal release in Test PyPI for the version in pyproject.toml, increment the number. Else 1. Save in $GITHUB_ENV
         run: |
-          echo "developmental_release_version=`echo '${{ env.backports_version }}.dev1'" >> $GITHUB_ENV
+          echo "developmental_release_version=`echo '${{ env.backports_version }}.dev1'`" >> $GITHUB_ENV
 
       - name: Log all the things
         # TODO: Compute the booleans
