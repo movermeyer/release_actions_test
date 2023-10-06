@@ -2,7 +2,12 @@ name: Publish
 
 on:
   release:
-    types: [edited, published]
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      requested_release_tag:
+        description: 'The tag to use for this developmental release (without `.dev` suffix) (e.g., `v2.0.1`)'
+        required: true
 
 jobs:
   # Responsible for validating inputs and generating release values for the rest of the workflow
@@ -20,7 +25,7 @@ jobs:
 
       - name: Normalize the release tag into a version
         run: |
-          echo "release_tag=`echo '${{ github.event.release.tag_name }}'`" >> $GITHUB_ENV
+          echo "release_tag=`echo '${{ github.event.release.tag_name }}${{ github.event.inputs.requested_release_tag }}'`" >> $GITHUB_ENV
 
       - name: Normalize the release tag into a version
         run: |
