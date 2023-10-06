@@ -11,7 +11,7 @@ on:
 
 jobs:
   # Responsible for validating inputs and generating release values for the rest of the workflow
-  # Takes in the tag from the GitHub release, or a manually provided one for developmental releases
+  # Takes in the tag from the GitHub release, or a manually provided one for developmental releases (i.e., tests of the CI pipeline)
   pre_build_sanity_check:
     runs-on: ubuntu-latest
     steps:
@@ -72,16 +72,13 @@ jobs:
           python -c 'from packaging import version; new = version.parse("${{ env.version_from_release_tag }}"); existing = version.parse("${{ env.test_pypi_version }}"); dev_number = existing.dev + 1 if existing.is_devrelease and new.release == existing.release else 1; epoch = f"{new.epoch}!" if new.epoch else ""; release = ".".join([str(x) for x in new.release]); pre = f"{new.pre[0]}{new.pre[1]}" if new.pre else ""; post = f".post{new.post}" if new.post else ""; dev = f".dev{dev_number}"; developmental_release_version=f"{epoch}{release}{pre}{post}{dev}"; print(f"developmental_release_version={developmental_release_version}")' >> $GITHUB_ENV
 
       - name: Log all the things
-        # TODO: Compute the booleans
         run: |
           echo 'release event's tag                                   `${{ env.release_tag }}`'
           echo 'release event's version                               `${{ env.version_from_release_tag }}`'
           echo 'version in pyproject.toml                             `${{ env.backports_version }}`'
-          echo 'Version in release event matches pyproject.toml?      `${{ env.backports_version }}`'
           echo 'Version in Test PyPI                                  `${{ env.test_pypi_version }}`'
-          echo 'Version in Test PyPI is current?                      `${{ env.test_pypi_version }}`'
-          echo 'Version in Test PyPI is developmental?                `${{ env.test_pypi_version }}`'
           echo 'New developmental version                             `${{ env.developmental_release_version }}`'
+          echo '${{ toJSON(github.event) }}'
 
       - name: Verify that the version string we produced looks like a Python version string
         # https://peps.python.org/pep-0440/
@@ -126,14 +123,25 @@ jobs:
   #   needs: [pre_build_sanity_check]
   #   runs-on: ubuntu-latest
   #   steps:
-  #     - uses: actions/checkout@v4
-  #       # with: # TODO: Releases aren't necessarily on the default branch
-  #       #   ref: ${{ env.release_tag }}
-
   #     - uses: actions/setup-python@v4
   #       name: Install Python
   #       with:
   #         python-version: '3.12'
+
+  #     - uses: actions/checkout@v4
+  #       # with: # TODO: Releases aren't necessarily on the default branch
+  #       #   ref: ${{ env.release_tag }}
+
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: release_values
+
+  #     - name: Load normalized release values
+  #       run: |
+  #         xargs -a release_values.txt -l -I{} bash -c 'echo {} >> $GITHUB_ENV'
+
+  #     - name: Replace version in pyproject.toml (developmental releases)
+  #       run: sed -i -e 's/^version = ".*\?"$/version = "${{ env.developmental_release_version }}"/g' pyproject.toml
 
   #     - name: Build sdist
   #       run: python setup.py sdist
