@@ -1,0 +1,19 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      requested_release_tag:
+        description: 'The tag to use for this developmental release (without `.dev` suffix) (e.g., `v2.0.1`)'
+        required: true
+
+jobs:
+  hello:
+    name: Michael action test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/michael
