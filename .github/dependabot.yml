@@ -1,8 +1,14 @@
 version: 2
+
+schedule: &schedule
+  interval: daily
+  time: '07:00'
+  timezone: Pacific/Midway
+
 updates:
   - package-ecosystem: 'github-actions'
-    directory: '/**'
-    schedule:
-      interval: daily
-      time: '07:00'
-      timezone: Pacific/Midway
+    directory: '/'
+    schedule: *schedule
+  - package-ecosystem: 'github-actions'
+    directory: '/nested'
+    schedule: *schedule
